@@ -97,3 +97,6 @@ $RECYCLE.BIN/
 gin-bin
 query.sh
 goorm.manifest
+
+.env
+/tmp
