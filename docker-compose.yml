@@ -1,22 +1,39 @@
 version: "3" 
 services: 
   db: 
-    image: mysql:8.0.19 
-    container_name: mysql_container
-    ports:
-      - "3306:3306" 
+    image: mariadb:11.2.2
+    container_name: gutti-cms-db
     environment:
-      MYSQL_ROOT_PASSWORD: "1234" 
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MARIADB_DATABASE: ${DB_DATABASE}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_USER_PASS}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./sql/install:/docker-entrypoint-initdb.d
+    ports:
+      - ${DB_PORT}:3306
     command: 
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+    networks:
+      - app-network
 
   api:
     build: 
       context: .
       dockerfile: Dockerfile.dev
+    container_name: gutti-cms-backend
     ports:
-      - ${PORT}:8080
+      - ${API_PORT}:8080
     volumes:
       - .:/usr/src/app
     command: air
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  mariadb-data:

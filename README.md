@@ -32,3 +32,8 @@ Run tests
 Create a `.env` file based on `.env.example`. Configure the following variables:
 
 - `API_PORT`: TCP port for the application.
+- `DB_ROOT_PASS`: MariaDB root user password
+- `DB_DATABASE`: MariaDB database to be created
+- `DB_USER`: MariaDB user
+- `DB_USER_PASS`: MariaDB user password
+- `DB_PORT`: MariaDB port to run
