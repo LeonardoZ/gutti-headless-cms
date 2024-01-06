@@ -36,4 +36,5 @@ Create a `.env` file based on `.env.example`. Configure the following variables:
 - `DB_DATABASE`: MariaDB database to be created
 - `DB_USER`: MariaDB user
 - `DB_USER_PASS`: MariaDB user password
+- `DB_HOST`: MariaDB host (`db` if you  are connection do MariaDB in this project docker-compose)
 - `DB_PORT`: MariaDB port to run
