@@ -10,3 +10,13 @@ services:
     command: 
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/usr/src/app
+    command: air
