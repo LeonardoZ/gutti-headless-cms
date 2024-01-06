@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - 8080:8080
+      - ${PORT}:8080
     volumes:
       - .:/usr/src/app
     command: air

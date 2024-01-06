@@ -8,7 +8,12 @@ A simples headless CMS, focused on simple content management.
 - Docker
 - Docker Compose
 
-## Execute
+## Execute (with docker)
+
+Just run:
+> `docker-compose up --build`
+
+## Execute (without docker)
 
 Install dependencies
 > `go mod download`
