@@ -18,7 +18,7 @@ POST {{base_url}}/content-blocks HTTP/1.1
 
 {
     "title": "Teste",
-    "raw_content": "",
+    "raw_content": "WOOOOOOOOOLLL",
     "raw_content_type": "plain/text"
 }
 

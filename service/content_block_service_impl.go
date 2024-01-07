@@ -1,47 +1,62 @@
 package service
 
 import (
+	"net/http"
+
 	"github.com/LeonardoZ/gutti-headless-cms/dto"
+	"github.com/LeonardoZ/gutti-headless-cms/error_handler"
 	"github.com/LeonardoZ/gutti-headless-cms/model"
 	"github.com/LeonardoZ/gutti-headless-cms/repository"
-	"github.com/go-playground/validator/v10"
 )
 
 type ContentBlockServiceImpl struct {
 	ContentBlockRepository repository.ContentBlockRepository
-	Validate               *validator.Validate
 }
 
-func NewContentBlockService(contentRepository repository.ContentBlockRepository, validate *validator.Validate) ContentBlockService {
+func NewContentBlockService(contentRepository repository.ContentBlockRepository) ContentBlockService {
 	return &ContentBlockServiceImpl{
 		ContentBlockRepository: contentRepository,
-		Validate:               validate,
 	}
 }
 
 // Create implements ContentBlockService.
-func (s *ContentBlockServiceImpl) Create(dto dto.UpsertContentBlockDTO) {
-	err := s.Validate.Struct(dto)
-	if err != nil {
-		panic(err)
-	}
+func (s *ContentBlockServiceImpl) Create(dto dto.UpsertContentBlockDTO) error {
 	model := model.ContentBlock{
 		Title:          dto.Title,
 		RawContent:     dto.RawContent,
 		RawContentType: dto.RawContentType,
 	}
 
-	s.ContentBlockRepository.Save(model)
+	err := s.ContentBlockRepository.Save(model)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Delete implements ContentBlockService.
-func (s *ContentBlockServiceImpl) Delete(id int) {
-	s.ContentBlockRepository.Delete(id)
+func (s *ContentBlockServiceImpl) Delete(id int) error {
+	found, err := s.FindById(id)
+	if err != nil {
+		return err
+	}
+
+	if found == nil {
+		return error_handler.NewHttpError("Failed to fetch content by id", "", http.StatusNotFound)
+	}
+	err = s.ContentBlockRepository.Delete(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // FindAll implements ContentBlockService.
-func (s *ContentBlockServiceImpl) FindAll() []dto.ContentBlockDTO {
-	result := s.ContentBlockRepository.FindAll()
+func (s *ContentBlockServiceImpl) FindAll() ([]dto.ContentBlockDTO, error) {
+	result, err := s.ContentBlockRepository.FindAll()
+	if err != nil {
+		return nil, err
+	}
 	responses := []dto.ContentBlockDTO{}
 	for _, value := range result {
 		dto := dto.ContentBlockDTO{
@@ -54,14 +69,17 @@ func (s *ContentBlockServiceImpl) FindAll() []dto.ContentBlockDTO {
 		}
 		responses = append(responses, dto)
 	}
-	return responses
+	return responses, nil
 }
 
 // FindByExtId implements ContentBlockService.
-func (s *ContentBlockServiceImpl) FindByExtId(uuid string) dto.ContentBlockDTO {
+func (s *ContentBlockServiceImpl) FindByExtId(uuid string) (*dto.ContentBlockDTO, error) {
 	contentData, err := s.ContentBlockRepository.FindByExtId(uuid)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+	if contentData == nil {
+		return nil, error_handler.NewHttpError("Failed to fetch content by id", "", http.StatusNotFound)
 	}
 	contentResponse := dto.ContentBlockDTO{
 		RawContent:     contentData.RawContent,
@@ -71,14 +89,17 @@ func (s *ContentBlockServiceImpl) FindByExtId(uuid string) dto.ContentBlockDTO {
 		CreatedAt:      contentData.CreatedAt,
 		UpdatedAt:      contentData.UpdatedAt,
 	}
-	return contentResponse
+	return &contentResponse, nil
 }
 
 // FindById implements ContentBlockService.
-func (s *ContentBlockServiceImpl) FindById(id int) dto.ContentBlockDTO {
+func (s *ContentBlockServiceImpl) FindById(id int) (*dto.ContentBlockDTO, error) {
 	contentData, err := s.ContentBlockRepository.FindById(id)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+	if contentData == nil {
+		return nil, error_handler.NewHttpError("Failed to fetch content by id", "", http.StatusNotFound)
 	}
 	contentResponse := dto.ContentBlockDTO{
 		RawContent:     contentData.RawContent,
@@ -88,15 +109,27 @@ func (s *ContentBlockServiceImpl) FindById(id int) dto.ContentBlockDTO {
 		CreatedAt:      contentData.CreatedAt,
 		UpdatedAt:      contentData.UpdatedAt,
 	}
-	return contentResponse
+	return &contentResponse, nil
 }
 
 // Update implements ContentBlockService.
-func (s *ContentBlockServiceImpl) Update(id int, dto dto.UpsertContentBlockDTO) {
+func (s *ContentBlockServiceImpl) Update(id int, dto dto.UpsertContentBlockDTO) error {
+	found, err := s.FindById(id)
+	if err != nil {
+		return err
+	}
+
+	if found == nil {
+		return error_handler.NewHttpError("Failed to fetch content by id", "", http.StatusNotFound)
+	}
 	contentModel := model.ContentBlock{
 		RawContent:     dto.RawContent,
 		RawContentType: dto.RawContentType,
 		Title:          dto.Title,
 	}
-	s.ContentBlockRepository.Update(id, contentModel)
+	err = s.ContentBlockRepository.Update(id, contentModel)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -5,10 +5,10 @@ import (
 )
 
 type ContentBlockService interface {
-	Create(dto dto.UpsertContentBlockDTO)
-	Update(id int, dto dto.UpsertContentBlockDTO)
-	Delete(id int)
-	FindById(id int) dto.ContentBlockDTO
-	FindByExtId(uuid string) dto.ContentBlockDTO
-	FindAll() []dto.ContentBlockDTO
+	Create(dto dto.UpsertContentBlockDTO) error
+	Update(id int, dto dto.UpsertContentBlockDTO) error
+	Delete(id int) error
+	FindById(id int) (*dto.ContentBlockDTO, error)
+	FindByExtId(uuid string) (*dto.ContentBlockDTO, error)
+	FindAll() ([]dto.ContentBlockDTO, error)
 }
