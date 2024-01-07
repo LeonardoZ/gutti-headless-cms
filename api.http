@@ -2,3 +2,37 @@
 @base_url = http://localhost:8080
 
 GET {{base_url}}/ping HTTP/1.1
+
+### 
+
+GET {{base_url}}/content-blocks/1 HTTP/1.1
+
+### 
+
+GET {{base_url}}/content-blocks HTTP/1.1
+
+
+### 
+
+POST {{base_url}}/content-blocks HTTP/1.1
+
+{
+    "title": "Teste",
+    "raw_content": "",
+    "raw_content_type": "plain/text"
+}
+
+### 
+
+PUT {{base_url}}/content-blocks/1 HTTP/1.1
+
+{
+    "title": "Teste",
+    "raw_content": "222",
+    "raw_content_type": "plain/text"
+}
+
+### 
+
+DELETE {{base_url}}/content-blocks/1 HTTP/1.1
+

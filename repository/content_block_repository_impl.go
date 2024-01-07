@@ -58,7 +58,7 @@ func (r *ContentBlockRepositoryImpl) FindById(id int) (model.ContentBlock, error
 
 // Save implements ContentBlockRepository.
 func (r *ContentBlockRepositoryImpl) Save(block model.ContentBlock) {
-	result := r.Db.Create(&block)
+	result := r.Db.Omit("ext_id", "created_at", "updated_at").Create(&block)
 	if result.Error != nil {
 		panic(result.Error)
 	}
